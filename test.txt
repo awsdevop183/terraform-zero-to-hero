@@ -1,0 +1,14 @@
+
+resource 
+data
+
+re
+
+<block> <parameter> {
+    filename = test.txt  
+    content = "Hello"     
+}
+
+
+
+
