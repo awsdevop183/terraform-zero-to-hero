@@ -30,7 +30,7 @@ resource "local_file" "localfile" {
 # filename and content = argument
 
 
-# immutable = you can modify
+# immutable = you can not modify
 # mutable = you can modify
 # # 
 
