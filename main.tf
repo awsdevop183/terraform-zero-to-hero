@@ -1,10 +1,14 @@
 resource "aws_vpc" "prod-vpc" {
-    cidr_block = "192.168.0.0/16"  
+    # cidr_block = var.list-type[1]
+    # cidr_block = var.map-type["cidr-2"]
+    # cidr_block = var.tuple-type[0]
+    cidr_block = var.object-type.cidr
+    enable_dns_hostnames = true
     tags_all = {
       Name = "terraform-vpc"
     }
     tags = {
-        Name = "terraform-vpc"
+        Name = var.vpc-tags
     }
   
 }
@@ -13,6 +17,10 @@ resource "local_file" "localfile" {
     content = "Hello"
     file_permission = "777"
 }
+
+
+
+
 
 
 
