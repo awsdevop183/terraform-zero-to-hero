@@ -1,8 +1,5 @@
 resource "aws_vpc" "prod-vpc" {
-    # cidr_block = var.list-type[1]
-    # cidr_block = var.map-type["cidr-2"]
-    # cidr_block = var.tuple-type[0]
-    cidr_block = var.object-type.cidr
+    cidr_block = var.vpc-cidr
     enable_dns_hostnames = true
     tags_all = {
       Name = "terraform-vpc"
@@ -10,13 +7,23 @@ resource "aws_vpc" "prod-vpc" {
     tags = {
         Name = var.vpc-tags
     }
+}
+
+resource "aws_subnet" "subnet-1" {
+    vpc_id = aws_vpc.prod-vpc.id #Implicit Dependency
+    cidr_block = var.subnet-cidr
   
 }
+
+
 resource "local_file" "localfile" {
-    filename = "terraform.txt"
-    content = "Hello"
+    filename = "./test.txt"
+    content = "VPC ID: ${aws_vpc.prod-vpc.id}" 
     file_permission = "777"
+    depends_on = [ aws_vpc.prod-vpc ]
 }
+
+
 
 
 
