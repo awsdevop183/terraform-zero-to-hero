@@ -9,13 +9,52 @@ resource "aws_vpc" "prod-vpc" {
   }
 }
 
-resource "aws_subnet" "subnet-1" {
+resource "aws_subnet" "subnets" {
   vpc_id     = aws_vpc.prod-vpc.id
-  cidr_block = var.subnet-cidr
+  cidr_block = each.value
+
+  for_each = var.subnet-cidr
+
   tags_all = {
-    Name = "Terraform-subnet-1"
+    Name = "Terraform-${each.key}"
   }
+  tags = {
+    Name = "Terraform-${each.key}"
+  }
+
 }
+
+
+
+
+# count
+# for_each
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
