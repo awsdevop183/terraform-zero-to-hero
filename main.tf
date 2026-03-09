@@ -10,71 +10,44 @@ resource "aws_vpc" "prod-vpc" {
 }
 
 resource "aws_subnet" "subnet-1" {
-  vpc_id     = aws_vpc.prod-vpc.id #Implicit Dependency
+  vpc_id     = aws_vpc.prod-vpc.id
   cidr_block = var.subnet-cidr
   tags_all = {
     Name = "Terraform-subnet-1"
   }
-  lifecycle {
-    create_before_destroy = true
-  }
-
 }
 
-resource "aws_security_group" "terraform-sg" {
-  vpc_id = aws_vpc.prod-vpc.id
-  name = "Terraform-SG"
-  tags_all = {
-    Name = "Terraform-SG"
-  }
-  # lifecycle {
-  #   # ignore_changes = all
-  #   # create_before_destroy = false
-  #   # prevent_destroy = true
-  # }
 
 
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+
+
+
+
+
+# resource "local_file" "localfile" {
+#   filename        = "./test.txt"
+#   content         = "VPC ID: ${aws_vpc.prod-vpc.id}"
+#   file_permission = "777"
+#   depends_on      = [aws_vpc.prod-vpc]
+# }
+
+
+
+# data "aws_vpc" "awsb10-vpc" {
+#   id = "vpc-0da903f45fc8b746e"
+# }
+
+# resource "aws_subnet" "awsb10-subnet" {
   
-}
-
-resource "local_file" "localfile" {
-  filename        = "./test.txt"
-  content         = "VPC ID: ${aws_vpc.prod-vpc.id}"
-  file_permission = "777"
-  depends_on      = [aws_vpc.prod-vpc]
-}
-
-
-
-data "aws_vpc" "awsb10-vpc" {
-  id = "vpc-0da903f45fc8b746e"
-}
-
-resource "aws_subnet" "awsb10-subnet" {
-  
-  vpc_id = data.aws_vpc.awsb10-vpc.id
-  cidr_block = "192.168.22.0/24"
-  tags = {
-    Name = "AWSB10-Terraform"
-  }
-  tags_all = {
-     Name = "AWSB10-Terraform"
-  }
-}
+#   vpc_id = data.aws_vpc.awsb10-vpc.id
+#   cidr_block = "192.168.22.0/24"
+#   tags = {
+#     Name = "AWSB10-Terraform"
+#   }
+#   tags_all = {
+#      Name = "AWSB10-Terraform"
+#   }
+# }
 
 
 # terraform validate
