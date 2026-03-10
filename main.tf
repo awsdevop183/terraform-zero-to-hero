@@ -72,6 +72,15 @@ resource "local_file" "localfile" {
 
 
 
+resource "aws_s3_bucket" "remote-state" {
+  bucket = "aws365.shop-remote"
+  
+}
+
+
+
+
+
 # data "aws_vpc" "awsb10-vpc" {
 #   id = "vpc-0da903f45fc8b746e"
 # }
