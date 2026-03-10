@@ -63,12 +63,12 @@ resource "aws_subnet" "subnets" {
 
 
 
-# resource "local_file" "localfile" {
-#   filename        = "./test.txt"
-#   content         = "VPC ID: ${aws_vpc.prod-vpc.id}"
-#   file_permission = "777"
-#   depends_on      = [aws_vpc.prod-vpc]
-# }
+resource "local_file" "localfile" {
+  filename        = "./test.txt"
+  content         = "VPC ID: ${aws_vpc.prod-vpc.id}"
+  file_permission = "777"
+  depends_on      = [aws_vpc.prod-vpc]
+}
 
 
 
