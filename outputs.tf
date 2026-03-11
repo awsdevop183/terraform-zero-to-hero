@@ -1,7 +1,4 @@
-output "vpc-id" {
-  value = aws_vpc.prod-vpc.id
+output "ec2-ip" {
+    value = aws_instance.testvm.public_ip
+  
 }
-# output "subnet-id" {
-#   value = aws_subnet.subnet-1.id
-
-# }

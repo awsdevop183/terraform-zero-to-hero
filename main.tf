@@ -1,145 +1,77 @@
-resource "aws_vpc" "prod-vpc" {
-  cidr_block           = var.vpc-cidr
-  enable_dns_hostnames = true
-  tags_all = {
-    Name = "terraform-vpc"
-  }
+resource "aws_vpc" "prod" {
+  cidr_block = var.vpc-cidr
   tags = {
-    Name = var.vpc-tags
+    Name = var.vpc-name
   }
+  
 }
 
-resource "aws_subnet" "subnets" {
-  vpc_id     = aws_vpc.prod-vpc.id
+resource "aws_subnet" "public-subs" {
+  vpc_id = aws_vpc.prod.id
+  for_each = var.public-cidr
   cidr_block = each.value
-
-  for_each = var.subnet-cidr
-
-  tags_all = {
-    Name = "Terraform-${each.key}"
-  }
+  map_public_ip_on_launch = true
   tags = {
-    Name = "Terraform-${each.key}"
+    Name = "${var.vpc-name}-public-${each.key}"
+  }
+  
+}
+
+resource "aws_subnet" "private-subs" {
+  vpc_id = aws_vpc.prod.id
+  for_each = var.private-cidr
+  cidr_block = each.value
+  tags = {
+    Name = "${var.vpc-name}-private-${each.key}"
+  }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.prod.id
+  tags = {
+    Name = "${var.vpc-name}-IGW"
+  }
+}
+
+resource "aws_route_table" "public-rt" {
+  vpc_id = aws_vpc.prod.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
   }
 
+  tags = {
+    Name = "${var.vpc-name}-Public-RT"
+  }
 }
 
 
 
 
-# count
-# for_each
+resource "aws_route_table" "private-rt" {
+  vpc_id = aws_vpc.prod.id
 
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   gateway_id = aws_internet_gateway.igw.id
+  # }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-resource "local_file" "local-test-file" {
-  filename        = "./test.txt"
-  content         = "VPC ID: ${aws_vpc.prod-vpc.id}"
-  file_permission = "777"
-  depends_on      = [aws_vpc.prod-vpc]
+  tags = {
+    Name = "${var.vpc-name}-Private-RT"
+  }
 }
 
 
-
-# resource "aws_s3_bucket" "remote-state" {
-#   bucket = "aws365.shop-remote"
+resource "aws_route_table_association" "public-association" {
+  route_table_id = aws_route_table.public-rt.id
+  for_each = var.public-cidr
+  subnet_id = aws_subnet.public-subs[each.key].id
   
-# }
-# resource "aws_dynamodb_table" "terraform_locks" {
-#   name           = "state-lock" # Unique name for your lock table
-#   billing_mode   = "PAY_PER_REQUEST"
-#   hash_key       = "LockID"
+}
 
-#   attribute {
-#     name = "LockID"
-#     type = "S"
-#   }
-# }
-
-
-
-
-
-# data "aws_vpc" "awsb10-vpc" {
-#   id = "vpc-0da903f45fc8b746e"
-# }
-
-# resource "aws_subnet" "awsb10-subnet" {
-  
-#   vpc_id = data.aws_vpc.awsb10-vpc.id
-#   cidr_block = "192.168.22.0/24"
-#   tags = {
-#     Name = "AWSB10-Terraform"
-#   }
-#   tags_all = {
-#      Name = "AWSB10-Terraform"
-#   }
-# }
-
-
-# terraform validate
-# terraform fmt
-
-
-
-
-
-
-# local = provider
-# file = resource_type
-# cidr_block = argument
-
-# prod-vpc = resource name
-# aws = provider
-# vpc = resource_type
-
-
-# filename and content = argument
-
-
-# immutable = you can not modify
-# mutable = you can modify
-# # 
-
-
-# Terraform workflow
-
-# 1. write configuration files
-# 2. Terraform init
-# 3. Terraform plan
-# 4. terraform apply
-
-
-
-# terraform destroy 
+resource "aws_route_table_association" "private-association" {
+  route_table_id = aws_route_table.private-rt.id
+  for_each = var.private-cidr
+  subnet_id = aws_subnet.private-subs[each.key].id
+}
