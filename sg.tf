@@ -1,6 +1,6 @@
 resource "aws_security_group" "terraform-sg" {
   vpc_id = aws_vpc.prod.id
-  name = "Terraform-SG"
+  name   = "Terraform-SG"
   tags = {
     Name = "Terraform-SG"
   }
@@ -20,5 +20,12 @@ resource "aws_security_group" "terraform-sg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-  
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "TCP"         #TCP,UDP,ICMP
+    cidr_blocks      = ["0.0.0.0/0"] # IPV4
+    ipv6_cidr_blocks = ["::/0"]      # IPV6
+  }
+
 }
